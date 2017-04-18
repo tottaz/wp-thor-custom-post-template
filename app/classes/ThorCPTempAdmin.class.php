@@ -29,13 +29,9 @@ if (!class_exists('ThorCPTempAdmin')) {
 			
 			add_action('plugins_loaded', array($this, 'thor_custom_post_template_load_textdomain'));
 
-			//The Following registers an api route with multiple parameters. 
-			add_action('rest_api_init', array($this, 'add_thor_custom_post_template_route'));
-
-			add_action('add_meta_boxes',array($this, 'wp_add_post_custom_template'));
-			add_action('save_post',array($this, 'wp_save_custom_post_template',10,2));
-			add_filter('single_template',array($this, 'wp_get_custom_post_template_for_template_loader'));
-			add_action( 'add_meta_boxes', array($this, 'wp_add_post_custom_template' ));
+			add_action('add_meta_boxes',array($this, 'thor_cbt_post_custom_template'));
+			add_action('save_post',array($this, 'thor_cbt_save_custom_post_template',10,2));
+			add_filter('single_template',array($this, 'thor_cbt_get_custom_post_template_for_template_loader'));
 
 			add_filter('admin_footer_text', array($this, 'ctp_admin_footer'));
 		}
@@ -126,7 +122,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		        }   
 		    }
 
-			delete_option ( 'wp_custom_post_template');
+			delete_option ( 'thor_cbt');
 			do_action( 'thor_custom_post_template_deactivate' );
 		}
 
@@ -165,7 +161,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 */
 		function _thor_custom_post_template_activate() {
 		    // Create new table if necessary
-			add_option ( 'wp_custom_post_template','post');
+			add_option ( 'thor_cbt','post');
 			// Activate
 			do_action( 'thor_custom_post_template_activate' );
 		}
@@ -183,13 +179,8 @@ if (!class_exists('ThorCPTempAdmin')) {
 				wp_enqueue_style( 'thor-font-awesome', THORCPTEMP_PLUGIN_URL . '/app/views/css/font-awesome.css' );
 				wp_enqueue_style( 'thor-bootstrap-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/bootstrap.css' );
 				wp_enqueue_style( 'thor-bootstrap-theme-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/bootstrap-theme.css' );
-//				wp_enqueue_style( 'thor-custom-style',  THORCPTEMP_PLUGIN_URL . '/app/views/css/myStyle.css');
 
-				wp_enqueue_script('thor_chart', THORCPTEMP_PLUGIN_URL . '/app/views/js/chart.js');
-				wp_enqueue_script('thor_countUp', THORCPTEMP_PLUGIN_URL . '/app/views/js/countUp.min.js');
-				wp_enqueue_script( 'thor-bootstrap-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/bootstrap.js' );
-				wp_enqueue_script( 'thor-jquery-flot-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/jquery.flot.js' );
-				wp_enqueue_script( 'thor-jquery-flot-pie-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/jquery.flot.pie.js' );
+				wp_enqueue_script( 'thor-bootstrap-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/bootstrap.js' );;
 
 				wp_localize_script( 'thor-admin-js', 'thor_base_url', get_site_url() );
 				wp_localize_script( 'thor-admin-js', 'thor_admin_url', get_admin_url() . 'admin.php?page=thor_custom_post_template_admin' );
@@ -203,7 +194,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 * @return void
 		 */	
 		public function thor_custom_post_template_admin_menu(){
-			add_menu_page ( 'WP Post Template', 'WP Post Template', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'),plugins_url('ico.png',__FILE__ ) );
+			add_menu_page ( 'WP Thor CPT', 'WP Thor CPT', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'),'fa-uploads-thor', 10 );
 		}
 		
 		/**
@@ -218,7 +209,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 			if (isset($_GET['tab'])){
 				$tab = $_GET['tab'];
 			} else {
-				$tab = 'dashboard';
+				$tab = 'general_settings';
 			}
 			
 			//url admin
@@ -258,32 +249,15 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 *
 		 * @return void
 		 */	
-		function thor_custom_post_template_settings_init(  ) { 
+		function thor_custom_post_template_settings_init(  ) {
 
-			register_setting('thor-cbt-settings', 'thor_custom_post_template_settings' );
-			add_settings_section( 'thor_custom_post_template_settings_section', '', array( $this, 'thor_custom_post_template_settings_section_callback' ), 'thor-cbt-settings', 'section_general' );
+
+//			register_setting('thor-cbt-settings', 'thor_custom_post_template_settings' );
+
+//			add_settings_section( 'thor_custom_post_template_settings_section', '', array( $this, 'thor_custom_post_template_settings_section_callback' ), 'thor-cbt-settings', 'section_general' );
 			
-			add_settings_field( 'thor_custom_post_template_field_api_key',  __('Google API Key', 'thor_custom_post_template'), array( $this, 'thor_custom_post_template_api_key_render' ), 'thor-cbt-settings', 'thor_custom_post_template_settings_section' );
+//			add_settings_field( 'thor_custom_post_template_checkbox_spi_render',  __('Google API Key', 'thor_custom_post_template'), array( $this, 'thor_custom_post_template_api_key_render' ), 'thor-cbt-settings', 'thor_custom_post_template_settings_section' );
 
-			add_settings_field('thor_custom_post_template_checkbox_spi', __('Send post notification', 'thor_custom_post_template'), array( $this, 'thor_custom_post_template_checkbox_spi_render' ), 'thor-cbt-settings', 'thor_custom_post_template_settings_section');
-
-			add_settings_field('thor_custom_post_template_checkbox_abl', __('Display admin-bar link', 'thor_custom_post_template'),  array( $this, 'thor_custom_post_template_checkbox_abl_render' ), 'thor-cbt-settings', 'thor_custom_post_template_settings_section');
-
-			add_settings_field('thor_custom_post_template_checkbox_debug', __('Show debug response', 'thor_custom_post_template'), array( $this, 'thor_custom_post_template_checkbox_debug_render' ), 'thor-cbt-settings', 'thor_custom_post_template_settings_section');
-		}
-
-		/**
-		 * Set The Parameters
-		 *
-		 * @param void
-		 *
-		 * @return void
-		 */	
-		function thor_custom_post_template_api_key_render() { 
-			$options = get_option('thor_custom_post_template_settings');
-			?>
-			<input type='text' name='thor_custom_post_template_settings[thor_custom_post_template_field_api_key]' size="45" value='<?php echo $options['thor_custom_post_template_field_api_key']; ?>' />
-			<?php
 		}
 
 		/**
@@ -566,20 +540,29 @@ if (!class_exists('ThorCPTempAdmin')) {
 			}
 		}
 
-		function wp_add_post_custom_template($postType) {
+		/**
+		 * Custom Post Type
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return array $rtmedia_plugins
+		 */
+		function thor_cbt_post_custom_template($postType) {
 			
-			if(get_option('wp_custom_post_template') == ''){ //get option value
+			if(get_option('thor_cbt') == ''){ //get option value
 				$postType_title = 'post';
 				$postType_arr[] = $postType_title;
 			}else{
-				$postType_title = get_option('wp_custom_post_template');
+				$postType_title = get_option('thor_cbt');
 				$postType_arr = explode(',',$postType_title);
 			}
 			if(in_array($postType, $postType_arr)){
 				add_meta_box(
 						'postparentdiv',
-						__('WP Post Template'),
-						'wp_custom_post_template_meta_box',
+						__('Thor Post Template'),
+						array($this, 'thor_cbt_meta_box'),
 						$postType,
 						'side', 
 						'core'
@@ -587,32 +570,51 @@ if (!class_exists('ThorCPTempAdmin')) {
 			}
 		}
 
-		function wp_custom_post_template_meta_box($post) {
-			if ( $post->post_type != 'page' && 0 != count( wp_get_post_custom_templates() ) ) {
+		/**
+		 * Meta Box.
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return 
+		 */
+		function thor_cbt_meta_box($post) {
+			if ( $post->post_type != 'page' && 0 != count( ThorCPTempAdmin::thor_cbt_get_post_custom_templates() ) ) {
 				$template = get_post_meta($post->ID,'_post_template',true);
 			?>
 				<label class="screen-reader-text" for="post_template"><?php _e('Post Template') ?></label>
 				<select name="post_template" id="post_template">
 					<option value='default'><?php _e('Default Template'); ?></option>
-					<?php wp_custom_post_template_dropdown($template); ?>
+					<?php ThorCPTempAdmin::thor_cbt_dropdown($template); ?>
 				</select>
 				<p><i><?php _e( 'Some themes have custom templates you can use for single posts template selecting from dropdown.'); ?></i></p>
 			<?php
 			}
 		}
 
-		function wp_get_post_custom_templates() {
+		/**
+		 * Get Post Custom Templates
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return 
+		 */
+		function thor_cbt_get_post_custom_templates() {
 		  if(function_exists('wp_get_themes')){
 				$themes = wp_get_themes();
-			}else{
+			} else {
 				$themes = get_themes();
-			}			
-			$theme = get_option( 'template' );
-		  $templates = $themes[$theme]['Template Files'];
-		  $post_templates = array();
+			}
 
-		  if ( is_array( $templates ) ) {
-		    $base = array( trailingslashit(get_template_directory()), trailingslashit(get_stylesheet_directory()) );
+			$theme = get_option( 'template' );
+		  	$templates = $themes[$theme]['Template Files'];
+		  	$post_templates = array();
+
+		  	if ( is_array( $templates ) ) {
+		    	$base = array( trailingslashit(get_template_directory()), trailingslashit(get_stylesheet_directory()) );
 
 		    foreach ( $templates as $template ) {
 		      $basename = str_replace($base, '', $template);
@@ -624,7 +626,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		        $template_data = implode( '', file( $template ));
 
 		        $name = '';
-		        if ( preg_match( '|WP Post Template:(.*)$|mi', $template_data, $name ) )
+		        if ( preg_match( '|Post Template:(.*)$|mi', $template_data, $name ) )
 		          $name = _cleanup_header_comment($name[1]);
 
 		        if ( !empty( $name ) ) {
@@ -636,8 +638,17 @@ if (!class_exists('ThorCPTempAdmin')) {
 		  return $post_templates;
 		}
 
-		function wp_custom_post_template_dropdown( $default = '' ) {
-		  $templates = wp_get_post_custom_templates();
+		/**
+		 * Dropdwon
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return 
+		 */
+		function thor_cbt_dropdown( $default = '' ) {
+		  $templates = ThorCPTempAdmin::thor_cbt_get_post_custom_templates();
 		  ksort( $templates );
 		  foreach (array_keys( $templates ) as $template )
 		    : if ( $default == $templates[$template] )
@@ -648,12 +659,30 @@ if (!class_exists('ThorCPTempAdmin')) {
 		  endforeach;
 		}
 
-		function wp_save_custom_post_template($post_id,$post) {
+		/**
+		 * Save Custom Post Template
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return 
+		 */
+		function thor_cbt_save_custom_post_template($post_id,$post) {
 		  if ($post->post_type !='page' && !empty($_POST['post_template']))
 		    update_post_meta($post->ID,'_post_template',$_POST['post_template']);
 		}
 
-		function wp_get_custom_post_template_for_template_loader($template) {
+		/**
+		 * Get Custom Post Template for Template Loader
+		 *
+		 * @access public
+		 *
+		 * @param  void
+		 *
+		 * @return array $rtmedia_plugins
+		 */
+		function thor_cbt_get_custom_post_template_for_template_loader($template) {
 		  global $wp_query;
 		  $post = $wp_query->get_queried_object();
 		  if ($post) {

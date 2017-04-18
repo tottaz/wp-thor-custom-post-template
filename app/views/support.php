@@ -20,7 +20,7 @@ if(!current_user_can('manage_options')) {
 			<div class="thor-stuffbox" style="margin-top: 50px;">
 				<h3 class="thor-h3">Documentation</h3>
 				<div class="inside">
-					<iframe src="https://thunderbeardesign.com/?post_type=productdocumentation&p=1069" width="100%" height="1000px"></iframe>
+					<iframe src="https://thunderbeardesign.com/productdocumentation/wp-thor-post-template/" width="100%" height="1000px"></iframe>
 				</div>
 			</div>
 		<?php break; ?>	
