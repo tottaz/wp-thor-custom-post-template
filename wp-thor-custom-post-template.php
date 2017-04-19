@@ -22,6 +22,15 @@ define('THORCPTEMP_VERSION', '1.0.0');
 define('THORCPTEMP_PLUGIN_URL', WP_PLUGIN_URL . '/' . dirname(plugin_basename(__FILE__)));
 define('THORCPTEMP_PLUGIN_PATH', WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)));
 define('THORCPTEMP_PLUGIN_FILE_PATH', WP_PLUGIN_DIR . '/' . plugin_basename(__FILE__));
+define('THORCPTEMP_SL_STORE_URL', 'https://thunderbeardesign.com' ); 
+define('THORCPTEMP_SL_ITEM_NAME', 'WP Thor Post Template' );
+// the name of the settings page for the license input to be displayed
+define('THORCPTEMP_PLUGIN_LICENSE_PAGE', 'thor_custom_post_template_admin&tab=licenses' );
+
+if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
+	// load our custom updater
+	require_once THORCPTEMP_PLUGIN_PATH . '/app/edd-include/EDD_SL_Plugin_Updater.php';
+}
 
 //Load The Admin Class
 if (!class_exists('ThorCPTempAdmin')) {

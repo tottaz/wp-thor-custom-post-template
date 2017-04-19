@@ -6,6 +6,7 @@
  *
  * @return void
  */
+
 if (!class_exists('ThorCPTempAdmin')) {
 	
 	class ThorCPTempAdmin {
@@ -20,10 +21,20 @@ if (!class_exists('ThorCPTempAdmin')) {
 				add_action('admin_menu', array($this, 'thor_custom_post_template_admin_menu'));
 			}
 
+			// Software Licensing and Updates
+			add_action('admin_init', array($this, 'edd_sl_thor_cpt_plugin_updater'));
+			add_action('admin_init', array($this, 'edd_thor_cpt_register_option'));
+
+			// Activate, check or deactivate Licenses
+			add_action('admin_init', array($this, 'edd_thor_cpt_activate_license'));
+			add_action('admin_init', array($this, 'edd_thor_cpt_deactivate_license'));
+			add_action( 'admin_notices', array($this, 'edd_thor_cpt_admin_notices'));
+
+			// Plugin Settings
 			add_action('admin_init', array($this, 'thor_custom_post_template_settings_init'));
 
-			add_action('wpmu_new_blog',  array($this, 'thor_on_new_blog', 10, 6)); 		
-			add_action('activate_blog',  array($this, 'thor_on_new_blog', 10, 6));
+			add_action('wpmu_new_blog', array($this, 'thor_on_new_blog', 10, 6)); 		
+			add_action('activate_blog', array($this, 'thor_on_new_blog', 10, 6));
 			
 			add_action('admin_enqueue_scripts', array($this, 'thor_custom_post_template_head') );
 			
@@ -217,6 +228,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 
 			//all tabs available
 			$tabs_arr = array('general_settings' => 'Settings',
+								'licenses'	=> 'Licenses',
 								'support' => 'Support',
 								'hireus' => 'Services',
 								'pluginsthemes'	=> 'Plugins/Themes'				
@@ -235,12 +247,14 @@ if (!class_exists('ThorCPTempAdmin')) {
 				case 'hireus':
 					require_once THORCPTEMP_PLUGIN_PATH . '/app/views/hireus.php';
 				break;
+				case 'licenses':
+					require_once THORCPTEMP_PLUGIN_PATH . '/app/views/licenses.php';
+					break;
 				case 'pluginsthemes':
 					require_once THORCPTEMP_PLUGIN_PATH . '/app/views/pluginsthemes.php';
 				break;
 			}
 		}
-
 
 		/**
 		 * Set The Settings Parameters
@@ -512,6 +526,250 @@ if (!class_exists('ThorCPTempAdmin')) {
 			$this->debug_info = $debug_info;
 		}
 
+		//
+		// Licensing and update functions
+		//
+		public function edd_sl_thor_cpt_plugin_updater() {
+
+			// retrieve our license key from the DB
+			$license_key = trim( get_option( 'edd_thor_cpt_license_key' ) );
+
+			// setup the updater
+			$edd_updater = new EDD_SL_Plugin_Updater( THORCPTEMP_SL_STORE_URL, __FILE__, array(
+					'version' 	=> '1.0', 				// current version number
+					'license' 	=> $license_key, 		// license key (used get_option above to retrieve from DB)
+					'item_name' => THORCPTEMP_SL_ITEM_NAME, 	// name of this plugin
+					'author' 	=> 'ThunderBear Design',  // author of this plugin
+					'beta'		=> false
+				)
+			);
+		}
+
+		function edd_thor_cpt_register_option() {
+			// creates our settings in the options table
+			register_setting('edd_thor_cpt_license', 'edd_thor_cpt_license_key', array($this, 'edd_sanitize_license'));
+		}
+
+		function edd_sanitize_license( $new ) {
+			$old = get_option( 'edd_thor_cpt_license_key' );
+			if( $old && $old != $new ) {
+				delete_option( 'edd_thor_cpt_license_status' ); 
+				// new license has been entered, so must reactivate
+			}
+			return $new;
+		}
+
+		/************************************
+		* this illustrates how to activate a license key
+		*************************************/
+
+		function edd_thor_cpt_activate_license() {
+
+			// listen for our activate button to be clicked
+			if( isset( $_POST['edd_license_activate'] ) ) {
+
+				// run a quick security check
+			 	if( ! check_admin_referer( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ) )
+					return; // get out if we didn't click the Activate button
+
+				// retrieve the license from the database
+				$license = trim( get_option( 'edd_thor_cpt_license_key' ) );
+
+
+				// data to send in our API request
+				$api_params = array(
+					'edd_action' => 'activate_license',
+					'license'    => $license,
+					'item_name'  => urlencode( THORCPTEMP_SL_ITEM_NAME ), // the name of our product in EDD
+					'url'        => home_url()
+				);
+
+				// Call the custom API.
+				$response = wp_remote_post( THORCPTEMP_SL_STORE_URL, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+				// make sure the response came back okay
+				if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+					if ( is_wp_error( $response ) ) {
+						$message = $response->get_error_message();
+					} else {
+						$message = __( 'An error occurred, please try again.' );
+					}
+				} else {
+					$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+					if ( false === $license_data->success ) {
+						switch( $license_data->error ) {
+							case 'expired' :
+								$message = sprintf(
+									__( 'Your license key expired on %s.' ),
+									date_i18n( get_option( 'date_format' ), strtotime( $license_data->expires, current_time( 'timestamp' ) ) )
+								);
+								break;
+							case 'revoked' :
+								$message = __( 'Your license key has been disabled.' );
+								break;
+							case 'missing' :
+								$message = __( 'Invalid license.' );
+								break;
+							case 'invalid' :
+							case 'site_inactive' :
+								$message = __( 'Your license is not active for this URL.' );
+								break;
+							case 'item_name_mismatch' :
+								$message = sprintf( __( 'This appears to be an invalid license key for %s.' ), THORCPTEMP_SL_ITEM_NAME );
+								break;
+							case 'no_activations_left':
+								$message = __( 'Your license key has reached its activation limit.' );
+								break;
+							default :
+
+								$message = __( 'An error occurred, please try again.' );
+								break;
+						}
+					}
+				}
+
+				// Check if anything passed on a message constituting a failure
+				if ( ! empty( $message ) ) {
+					$base_url = admin_url( 'plugins.php?page=' . THORCPTEMP_PLUGIN_LICENSE_PAGE );
+					$redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+					wp_redirect( $redirect );
+					exit();
+				}
+
+				// $license_data->license will be either "valid" or "invalid"
+
+				update_option( 'edd_thor_cpt_license_status', $license_data->license );
+				wp_redirect( admin_url( 'plugins.php?page=' . THORCPTEMP_PLUGIN_LICENSE_PAGE ) );
+				exit();
+			}
+		}
+
+
+		/***********************************************
+		* Illustrates how to deactivate a license key.
+		* This will decrease the site count
+		***********************************************/
+
+		function edd_thor_cpt_deactivate_license() {
+
+			// listen for our activate button to be clicked
+			if( isset( $_POST['edd_license_deactivate'] ) ) {
+
+				// run a quick security check
+			 	if( ! check_admin_referer( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ) )
+					return; // get out if we didn't click the Activate button
+
+				// retrieve the license from the database
+				$license = trim( get_option( 'edd_thor_cpt_license_key' ) );
+
+
+				// data to send in our API request
+				$api_params = array(
+					'edd_action' => 'deactivate_license',
+					'license'    => $license,
+					'item_name'  => urlencode( THORCPTEMP_SL_ITEM_NAME ), // the name of our product in EDD
+					'url'        => home_url()
+				);
+
+				// Call the custom API.
+				$response = wp_remote_post( THORCPTEMP_SL_STORE_URL, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+				// make sure the response came back okay
+				if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+
+					if ( is_wp_error( $response ) ) {
+						$message = $response->get_error_message();
+					} else {
+						$message = __( 'An error occurred, please try again.' );
+					}
+
+					$base_url = admin_url( 'plugins.php?page=' . THORCPTEMP_PLUGIN_LICENSE_PAGE );
+					$redirect = add_query_arg( array( 'sl_activation' => 'false', 'message' => urlencode( $message ) ), $base_url );
+
+					wp_redirect( $redirect );
+					exit();
+				}
+
+				// decode the license data
+				$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+				// $license_data->license will be either "deactivated" or "failed"
+				if( $license_data->license == 'deactivated' ) {
+					delete_option( 'edd_thor_cpt_license_status' );
+				}
+
+				wp_redirect( admin_url( 'plugins.php?page=' . THORCPTEMP_PLUGIN_LICENSE_PAGE ) );
+				exit();
+			}
+		}
+
+		/************************************
+		* check if a license key is still valid the updater does this for you,
+		* so this is only needed if you
+		* want to do something custom
+		*************************************/
+
+		public function edd_thor_cpt_check_license() {
+
+			global $wp_version;
+
+			$license = trim( get_option( 'edd_thor_cpt_license_key' ) );
+
+			$api_params = array(
+				'edd_action' => 'check_license',
+				'license' => $license,
+				'item_name' => urlencode( THORCPTEMP_SL_ITEM_NAME ),
+				'url'       => home_url()
+			);
+
+			// Call the custom API.
+			$response = wp_remote_post( THORCPTEMP_SL_STORE_URL, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+
+			if ( is_wp_error( $response ) )
+				return false;
+
+			$license_data = json_decode( wp_remote_retrieve_body( $response ) );
+
+			if( $license_data->license == 'valid' ) {
+				echo 'valid'; exit;
+				// this license is still valid
+			} else {
+				echo 'invalid'; exit;
+				// this license is no longer valid
+			}
+		}
+
+		/**
+		 * This is a means of catching errors from the activation method above and displaying it to the customer
+		 */
+		public function edd_thor_cpt_admin_notices() {
+			if ( isset( $_GET['sl_activation'] ) && ! empty( $_GET['message'] ) ) {
+
+				switch( $_GET['sl_activation'] ) {
+
+					case 'false':
+						$message = urldecode( $_GET['message'] );
+						?>
+						<div class="error">
+							<p><?php echo $message; ?></p>
+						</div>
+						<?php
+						break;
+
+					case 'true':
+					default:
+						// Developers can put a custom success message here for when activation is successful if they way.
+						break;
+
+				}
+			}
+		}
+
+		//
+		//* End of all licenses & updates
+		//
 
 		/**
 		 * Get plugin_info.
