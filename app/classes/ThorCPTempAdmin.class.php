@@ -16,10 +16,8 @@ if (!class_exists('ThorCPTempAdmin')) {
     		register_activation_hook(WP_PLUGIN_DIR . '/wp-thor-custom-post-template/wp-thor-custom-post-template.php',  array($this, 'thor_custom_post_template_activate'));
 			register_deactivation_hook( WP_PLUGIN_DIR . '/wp-thor-custom-post-template/wp-thor-custom-post-template.php',  array($this, 'thor_custom_post_template_deactivate' ));
 
-			if ( is_admin() ) {
-				// Admin Menu
-				add_action('admin_menu', array($this, 'thor_custom_post_template_admin_menu'));
-			}
+			// Admin Menu
+			add_action('admin_menu', array($this, 'thor_custom_post_template_admin_menu'));
 
 			// Software Licensing and Updates
 			add_action('admin_init', array($this, 'edd_sl_thor_cpt_plugin_updater'));
@@ -42,6 +40,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 
 			add_action('add_meta_boxes',array($this, 'thor_cbt_post_custom_template'));
 			add_action('save_post',array($this, 'thor_cbt_save_custom_post_template',10,2));
+
 			add_filter('single_template',array($this, 'thor_cbt_get_custom_post_template_for_template_loader'));
 
 			add_filter('admin_footer_text', array($this, 'ctp_admin_footer'));
@@ -205,7 +204,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 * @return void
 		 */	
 		public function thor_custom_post_template_admin_menu(){
-			add_menu_page ( 'WP Thor CPT', 'WP Thor CPT', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'),'fa-uploads-thor', 10 );
+			add_menu_page ( 'WP Thor CPT', 'WP Thor CPT', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'), plugins_url( 'wp-thor-custom-post-template/app/views/images/template-24c.png' ), 6 );
 		}
 		
 		/**
