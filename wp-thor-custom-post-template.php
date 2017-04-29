@@ -3,7 +3,11 @@
 Plugin Name: WP Thor Post Template
 Plugin URI:
 Description: This plugin allows theme authors to create a post template as well as page template for the single post.
+<<<<<<< HEAD
 Version: 1.2.0
+=======
+Version: 1.0.0
+>>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 Author: ThunderBear Design
 Author URI: http://thunderbeardesign.com
 
@@ -32,6 +36,7 @@ if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
 	require_once THORCPTEMP_PLUGIN_PATH . '/app/edd-include/EDD_SL_Plugin_Updater.php';
 }
 
+<<<<<<< HEAD
 // retrieve our license key from the DB
 $license_key = trim( get_option( 'edd_thor_cpt_license_key' ) );
 // setup the updater
@@ -44,6 +49,8 @@ $edd_updater = new EDD_SL_Plugin_Updater( THORCPTEMP_SL_STORE_URL, __FILE__, arr
 	)
 );
 
+=======
+>>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 //Load The Admin Class
 if (!class_exists('ThorCPTempAdmin')) {
     require_once THORCPTEMP_PLUGIN_PATH . '/app/classes/ThorCPTempAdmin.class.php';

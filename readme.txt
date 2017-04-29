@@ -4,7 +4,11 @@ Tags: post template, custom template for post, wp custom post template, custom p
 Requires at least: 4.x
 Tested up to: 4.7
 Donate link: 
+<<<<<<< HEAD
 Stable tag: 1.2
+=======
+Stable tag: 1.0
+>>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 License: GPLv2 or later
 
 
