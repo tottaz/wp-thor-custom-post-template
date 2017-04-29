@@ -16,10 +16,6 @@ if (!class_exists('ThorCPTempAdmin')) {
     		register_activation_hook(WP_PLUGIN_DIR . '/wp-thor-custom-post-template/wp-thor-custom-post-template.php',  array($this, 'thor_custom_post_template_activate'));
 			register_deactivation_hook( WP_PLUGIN_DIR . '/wp-thor-custom-post-template/wp-thor-custom-post-template.php',  array($this, 'thor_custom_post_template_deactivate' ));
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 			// Admin Menu
 			add_action('admin_menu', array($this, 'thor_custom_post_template_admin_menu'));
 
@@ -35,26 +31,16 @@ if (!class_exists('ThorCPTempAdmin')) {
 			// Plugin Settings
 			add_action('admin_init', array($this, 'thor_custom_post_template_settings_init'));
 
-<<<<<<< HEAD
 			add_action('wpmu_new_blog', array($this, 'thor_on_new_blog'), 10, 6); 		
 			add_action('activate_blog', array($this, 'thor_on_new_blog'), 10, 6);
 			
 			add_action('admin_enqueue_scripts', array($this, 'thor_custom_post_template_head'));
-=======
-			add_action('wpmu_new_blog', array($this, 'thor_on_new_blog', 10, 6)); 		
-			add_action('activate_blog', array($this, 'thor_on_new_blog', 10, 6));
-			
-			add_action('admin_enqueue_scripts', array($this, 'thor_custom_post_template_head') );
->>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 			
 			add_action('plugins_loaded', array($this, 'thor_custom_post_template_load_textdomain'));
 
 			add_action('add_meta_boxes',array($this, 'thor_cbt_post_custom_template'));
-<<<<<<< HEAD
+
 			add_action('save_post',array($this, 'thor_cbt_save_custom_post_template'),10,2);
-=======
-			add_action('save_post',array($this, 'thor_cbt_save_custom_post_template',10,2));
->>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 
 			add_filter('single_template',array($this, 'thor_cbt_get_custom_post_template_for_template_loader'));
 
@@ -719,8 +705,6 @@ if (!class_exists('ThorCPTempAdmin')) {
 			}
 		}
 
-<<<<<<< HEAD
-=======
 		/************************************
 		* check if a license key is still valid the updater does this for you,
 		* so this is only needed if you
@@ -757,7 +741,6 @@ if (!class_exists('ThorCPTempAdmin')) {
 			}
 		}
 
->>>>>>> dd41a166e10d9917a979583a100a5a0e22a169eb
 		/**
 		 * This is a means of catching errors from the activation method above and displaying it to the customer
 		 */
