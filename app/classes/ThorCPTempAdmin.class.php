@@ -133,17 +133,24 @@ if (!class_exists('ThorCPTempAdmin')) {
 		        }   
 		    }
 
+<<<<<<< HEAD
 		    // Delete Licenses Key
 			delete_option( 'edd_thor_cpt_license_key' );
 			delete_option( 'edd_thor_cpt_license_status' );
 
 			// Delete plugin options
+=======
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 			delete_option ( 'thor_cbt');
 			do_action( 'thor_custom_post_template_deactivate' );
 		}
 
 		/**
+<<<<<<< HEAD
 		 * Run activation routine on creation / activation of a multisite blog if WP THOR is activated network-wide.
+=======
+		 * Run activation routine on creation / activation of a multisite blog if WP THOR FCM is activated network-wide.
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 		 *
 		 * Will only be called by multisite actions.
 		 *
@@ -191,6 +198,7 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 */	
 		public function thor_custom_post_template_head(){
 
+<<<<<<< HEAD
 				wp_enqueue_style( 'thor-custom-post-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/style.css' );
 				wp_enqueue_style( 'thor-custom-post-font-awesome', THORCPTEMP_PLUGIN_URL . '/app/views/css/font-awesome.css' );
 				wp_enqueue_style( 'thor-custom-post-bootstrap-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/bootstrap.css' );
@@ -198,6 +206,17 @@ if (!class_exists('ThorCPTempAdmin')) {
 
 				wp_enqueue_script( 'thor-custom-post-bootstrap-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/bootstrap.js' );;
 
+=======
+				wp_enqueue_style( 'thor-admin-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/style.css' );
+				wp_enqueue_style( 'thor-font-awesome', THORCPTEMP_PLUGIN_URL . '/app/views/css/font-awesome.css' );
+				wp_enqueue_style( 'thor-bootstrap-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/bootstrap.css' );
+				wp_enqueue_style( 'thor-bootstrap-theme-style', THORCPTEMP_PLUGIN_URL . '/app/views/css/bootstrap-theme.css' );
+
+				wp_enqueue_script( 'thor-bootstrap-js', THORCPTEMP_PLUGIN_URL . '/app/views/js/bootstrap.js' );;
+
+				wp_localize_script( 'thor-admin-js', 'thor_base_url', get_site_url() );
+				wp_localize_script( 'thor-admin-js', 'thor_admin_url', get_admin_url() . 'admin.php?page=thor_custom_post_template_admin' );
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 		}
 
 		/**
@@ -208,7 +227,11 @@ if (!class_exists('ThorCPTempAdmin')) {
 		 * @return void
 		 */	
 		public function thor_custom_post_template_admin_menu(){
+<<<<<<< HEAD
 			add_menu_page ( 'Thor CPT', 'Thor CPT', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'), plugins_url( 'wp-thor-custom-post-template/app/views/images/template-24c.png' ), 6 );
+=======
+			add_menu_page ( 'WP Thor CPT', 'WP Thor CPT', 'manage_options', 'thor_custom_post_template_admin', array($this, 'thor_custom_post_template_admin'), plugins_url( 'wp-thor-custom-post-template/app/views/images/template-24c.png' ), 6 );
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 		}
 		
 		/**
@@ -391,7 +414,11 @@ if (!class_exists('ThorCPTempAdmin')) {
 				$page = $_GET['page'];
 				switch($page) {
 					case 'thor_custom_post_template_admin':
+<<<<<<< HEAD
 						echo "<div class=\"social-links alignleft\"><i>Created by <a href=\"http://thunderbeardesign.com\" target=\"_blank\">ThunderBear Design</a></i>
+=======
+						echo "<div class=\"social-links alignleft\"><i>Created by <a href='http://thunderbeardesign.com'>ThunderBear Design</a></i>				
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 						<a href=\"http://twitter.com/tbearmarketing\" class=\"twitter\" target=\"_blank\"><span
 						class=\"dashicons dashicons-twitter\"></span></a>
 						<a href=\"fb.me/thunderbeardesign\" class=\"facebook\"
@@ -569,7 +596,11 @@ if (!class_exists('ThorCPTempAdmin')) {
 		function edd_thor_cpt_activate_license() {
 
 			// listen for our activate button to be clicked
+<<<<<<< HEAD
 			if( isset( $_POST['edd_thor_cpt_license_activate'] ) ) {
+=======
+			if( isset( $_POST['edd_license_activate'] ) ) {
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 
 				// run a quick security check
 			 	if( ! check_admin_referer( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ) )
@@ -658,7 +689,11 @@ if (!class_exists('ThorCPTempAdmin')) {
 		function edd_thor_cpt_deactivate_license() {
 
 			// listen for our activate button to be clicked
+<<<<<<< HEAD
 			if( isset( $_POST['edd_thor_cpt_license_deactivate'] ) ) {
+=======
+			if( isset( $_POST['edd_license_deactivate'] ) ) {
+>>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
 
 				// run a quick security check
 			 	if( ! check_admin_referer( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ) )
