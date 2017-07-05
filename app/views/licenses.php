@@ -31,17 +31,11 @@ $status  = get_option( 'edd_thor_cpt_license_status' );
 									<?php if( $status !== false && $status == 'valid' ) { ?>
 										<span style="color:green;"><?php _e('active'); ?></span>
 										<?php wp_nonce_field( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ); ?>
-<<<<<<< HEAD
 										<input type="submit" class="button-secondary" name="edd_thor_cpt_license_deactivate" value="<?php _e('Deactivate License'); ?>"/>
 									<?php } else {
 										wp_nonce_field( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ); ?>
 										<input type="submit" class="button-secondary" name="edd_thor_cpt_license_activate" value="<?php _e('Activate License'); ?>"/>
-=======
-										<input type="submit" class="button-secondary" name="edd_license_deactivate" value="<?php _e('Deactivate License'); ?>"/>
-									<?php } else {
-										wp_nonce_field( 'edd_thor_cpt_nonce', 'edd_thor_cpt_nonce' ); ?>
-										<input type="submit" class="button-secondary" name="edd_license_activate" value="<?php _e('Activate License'); ?>"/>
->>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
+
 									<?php } ?>
 								</td>
 							</tr>

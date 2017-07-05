@@ -4,11 +4,8 @@
 			<div class="thor-dashboard-logo">
 				<div class="thor-dashboard-text text-center">
 					<a href="<?php echo $url.'&tab=dashboard';?>">
-<<<<<<< HEAD
 						<img src="<?php echo THORCPTEMP_PLUGIN_URL;?>/app/views/images/wp-thor-logo.png"/>
-=======
-						<img src="<?php echo THORCPTEMP_PLUGIN_URL;?>/app/views/images/wpthorfcm-logo.jpg"/>
->>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
+
 					</a>
 				</div>
 			</div>
@@ -35,5 +32,3 @@
 		</div>
 	</div>
 <?php 
-
-$themes_dir = str_replace('plugins/wp-thor-cbt','themes', THORCPTEMP_PLUGIN_PATH);
