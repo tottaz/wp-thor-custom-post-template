@@ -20,7 +20,6 @@ if (!class_exists('ThorCPTempAdmin')) {
 			add_action('admin_menu', array($this, 'thor_custom_post_template_admin_menu'));
 
 			// Software Licensing and Updates
-			add_action('admin_init', array($this, 'edd_sl_thor_cpt_plugin_updater'));
 			add_action('admin_init', array($this, 'edd_thor_cpt_register_option'));
 
 			// Activate, check or deactivate Licenses
@@ -527,25 +526,6 @@ if (!class_exists('ThorCPTempAdmin')) {
 			}
 
 			$this->debug_info = $debug_info;
-		}
-
-		//
-		// Licensing and update functions
-		//
-		public function edd_sl_thor_cpt_plugin_updater() {
-
-			// retrieve our license key from the DB
-			$license_key = trim( get_option( 'edd_thor_cpt_license_key' ) );
-
-			// setup the updater
-			$edd_updater = new EDD_SL_Plugin_Updater( THORCPTEMP_SL_STORE_URL, __FILE__, array(
-					'version' 	=> '1.0', 				// current version number
-					'license' 	=> $license_key, 		// license key (used get_option above to retrieve from DB)
-					'item_name' => THORCPTEMP_SL_ITEM_NAME, 	// name of this plugin
-					'author' 	=> 'ThunderBear Design',  // author of this plugin
-					'beta'		=> false
-				)
-			);
 		}
 
 		function edd_thor_cpt_register_option() {

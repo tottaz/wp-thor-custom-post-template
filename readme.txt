@@ -3,13 +3,9 @@ Contributors: ThunderBear Design
 Tags: post template, custom template for post, wp custom post template, custom post type, custom template, post from template, posts, templates, custom post template, custom theme template, simple post templates, single post templates, template, theme template, wordpress post template, wp post template
 Requires at least: 4.x
 Tested up to: 4.7
-<<<<<<< HEAD
-Stable tag: 1.3
-=======
-Stable tag: 1.2
->>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
+Stable tag: 1.5
 License: GPLv2 or later
-
+Plugin URI: https://thunderbeardesign.com/downloads/wp-thor-post-template
 
 == Description ==
 

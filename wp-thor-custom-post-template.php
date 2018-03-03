@@ -1,14 +1,12 @@
 <?php
-/*
-Plugin Name: WP Thor Post Template
-Plugin URI:
-Description: This plugin allows theme authors to create a post template as well as page template for the single post.
-
-Version: 1.0
-Author: ThunderBear Design
-Author URI: http://thunderbeardesign.com
-
-Build: 1.0
+/**
+* Plugin Name: WP Thor Post Template
+* Plugin URI: https://thunderbeardesign.com/downloads/wp-thor-post-template
+* Description: This plugin allows theme authors to create a post template as well as page template for the single post.
+* Version: 1.5
+* Author: ThunderBear Design
+* Author URI: http://thunderbeardesign.com
+* Build: 1.5
 */
 
 // Prevent direct access to this file.
@@ -19,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 //
-define('THORCPTEMP_VERSION', '1.0');
 define('THORCPTEMP_PLUGIN_URL', WP_PLUGIN_URL . '/' . dirname(plugin_basename(__FILE__)));
 define('THORCPTEMP_PLUGIN_PATH', WP_PLUGIN_DIR . '/' . dirname(plugin_basename(__FILE__)));
 define('THORCPTEMP_PLUGIN_FILE_PATH', WP_PLUGIN_DIR . '/' . plugin_basename(__FILE__));
@@ -36,7 +33,7 @@ if( !class_exists( 'EDDCPT_SL_Plugin_Updater' ) ) {
 $license_key = trim( get_option( 'edd_thor_cpt_license_key' ) );
 // setup the updater
 $edd_updater = new EDDCPT_SL_Plugin_Updater( THORCPTEMP_SL_STORE_URL, __FILE__, array( 
-		'version' 	=> '1.3', 			// current version number
+		'version' 	=> '1.5', 			// current version number
 		'license' 	=> $license_key, 	// license key (used get_option above to retrieve from DB)
 		'item_name'	=> urlencode( THORCPTEMP_SL_ITEM_NAME ), 	// name of this plugin
 		'author' 	=> 'ThunderBear Design',  // author of this plugin
