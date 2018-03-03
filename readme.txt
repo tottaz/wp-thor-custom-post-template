@@ -52,7 +52,6 @@ This is first release.
 == Changelog ==
 
 = 1.0 =
-<<<<<<< HEAD
 * A intial version.
 
 = 1.1 =
@@ -60,6 +59,3 @@ Fixed issue with adding to a post
 
 = 1.2 =
 Fixed issue with filenames made them unique
-=======
-* A intial version.
->>>>>>> ac6d85d488c1c0685b9bebb25caff1736fc6dbf3
